@@ -5,7 +5,7 @@ const app = express();
 const pkg = require('./package.json');
 const { port } = require('./config')
 
-app.get("/google-spreadsheet", (req, res) => {
+app.get("/", (req, res) => {
   
   // Identifying which document we'll be accessing/reading from
   var doc = new GoogleSpreadsheet('1nBVbqtmJpZry73GaHLP7ZDTyuVpcFcp2r7PJiUXB1JU');
