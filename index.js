@@ -1,9 +1,10 @@
 const express = require("express");
+const config = require('./config');
 const GoogleSpreadsheet = require('google-spreadsheet');
 const creds = require('./client_secret.json');
 const app = express();
 const pkg = require('./package.json');
-const { port } = require('./config')
+const { port } = config;
 
 app.get("/", (req, res) => {
   
@@ -18,11 +19,12 @@ app.get("/", (req, res) => {
   
   // Callback function determining what to do with the information
   function callback(err, rows){
-    
+    if (err) {
+      console.log(err)
+    }
     // Logging the output or error, depending on how the request went
-    console.log(rows)
     res.send({ rows: rows })
-    console.log(err)
+
     
     // Rending the test page while passing in the response data through "rows". Can access specific data points via: rows[i]._value
     
