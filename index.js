@@ -6,29 +6,34 @@ const app = express();
 const pkg = require('./package.json');
 const { port } = config;
 
-app.get("/", (req, res) => {
-  
+app.get("/data/:userDni", (req, res) => {
+  const { userDni } = req.params;
+  if (!userDni) {
+    return res.status(404).json({ error: 'Bad request' });
+  }
   // Identifying which document we'll be accessing/reading from
   var doc = new GoogleSpreadsheet('1nBVbqtmJpZry73GaHLP7ZDTyuVpcFcp2r7PJiUXB1JU');
 
   // Authentication
   doc.useServiceAccountAuth(creds, function (err) {
-  
-  // Getting cells back from tab #2 of the file
-  doc.getRows(1, callback)
-  
-  // Callback function determining what to do with the information
-  function callback(err, rows){
     if (err) {
-      console.log(err)
+      return res.status(500).json({ error: err.message })
     }
-    // Logging the output or error, depending on how the request went
-    res.send({ rows: rows })
-
+    // Getting cells back from tab #2 of the file
+    doc.getRows(1, callback)
     
-    // Rending the test page while passing in the response data through "rows". Can access specific data points via: rows[i]._value
-    
-  }
+    // Callback function determining what to do with the information
+    function callback(err, rows){
+      if (err) {
+        return res.status(500).json({ error: err.message })
+      }
+      // Logging the output or error, depending on how the request went
+      const user = rows.find(user => user.dni === userDni);
+      if (!user) {
+        return res.status(404).json({ error: 'Not found' });
+      }
+      res.send(user);
+    }
   });  
 });
 
