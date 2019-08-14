@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const jwt = require('jsonwebtoken');
+const helmet = require('helmet');
 const config = require('./config');
 const GoogleSpreadsheet = require('google-spreadsheet');
 const requestPromise = require('request-promise');
@@ -12,7 +13,8 @@ const { port } = config;
 
 app.set('config', config);
 app.set('pkg', pkg);
-app.use(cors())
+app.use(cors());
+app.use(helmet());
 app.use(bodyParser.urlencoded({ extended: false }))
 
 // parse application/json
