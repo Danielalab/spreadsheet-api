@@ -34,7 +34,6 @@ app.post("/data/:userDni", (req, res) => {
   };
   requestPromise(options)
     .then(({ success, hostname }) => {
-      console.log('request', success, hostname)
       if (success && (hostname === 'localhost' || hostname === 'https://score-financiero.firebaseapp.com/')) {
         // Identifying which document we'll be accessing/reading from
         const doc = new GoogleSpreadsheet('1nBVbqtmJpZry73GaHLP7ZDTyuVpcFcp2r7PJiUXB1JU');
