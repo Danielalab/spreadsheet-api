@@ -20,7 +20,7 @@ app.use(bodyParser.urlencoded({ extended: false }))
 // parse application/json
 app.use(bodyParser.json())
 
-const readSpreadsheet = (userDni, res, remember = false) => {
+const readSpreadsheet = (userDni, res) => {
   // Identifying which document we'll be accessing/reading from
   const doc = new GoogleSpreadsheet('1nBVbqtmJpZry73GaHLP7ZDTyuVpcFcp2r7PJiUXB1JU');
 
@@ -40,9 +40,7 @@ const readSpreadsheet = (userDni, res, remember = false) => {
         return res.status(404).json({ error: 'Not found' });
       }
       res.send({
-        ...user,
-        /* token: remember ? jwt.sign({ dni: userDni }, 'secret',
-          { expiresIn: 60 * 60 }): null */
+        ...user
       });
     }
     // Getting cells back from tab #2 of the file
@@ -56,40 +54,7 @@ app.post("/data/:userDni", (req, res) => {
   if (!userDni) {
     return res.status(403).json({ error: 'Bad request' })
   }
-  if (!(referer === 'http://localhost:5500/dist/' || referer === 'https://score-financiero.firebaseapp.com/')) {
-    return res.status(403).json({ error: 'Bad request' })
-  }
-  const { token, respRecaptcha, remember } = req.body;
-  const options = {
-    method: 'POST',
-    uri: `https://www.google.com/recaptcha/api/siteverify?secret=6LestLIUAAAAAIhztah6on5s-2msBSr9EQOw2aa9&response=${respRecaptcha}`,
-    json: true
-  };
-/*   if (token) {
-    jwt.verify(token, 'secret', (err, user) => {
-      if (err) {
-        return res.status(401).json({ error: err.message })
-      }
-      if (user.dni !== userDni) {
-        return res.status(403).json({ error: 'Bad request' })
-      }
-      readSpreadsheet(userDni, res)
-    })
-  } else */ 
-  if (!respRecaptcha) {
-    return readSpreadsheet(userDni, res)
-  }
-  requestPromise(options)
-    .then(({ success, hostname }) => {
-      if (success && (hostname === 'localhost' || hostname === 'https://score-financiero.firebaseapp.com/')) {
-        readSpreadsheet(userDni, res)
-      } else {
-        return res.status(403).json({ error: 'Bad request' });
-      }
-    })
-    .catch(error => {
-      return res.status(403).json({ error: error.message });
-    })
+  return readSpreadsheet(userDni, res);
 });
 
 
