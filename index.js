@@ -48,7 +48,7 @@ const readSpreadsheet = (userDni, res) => {
   });
 }
 
-app.post("/data/:userDni", (req, res) => {
+app.get("/data/:userDni", (req, res) => {
   const { userDni } = req.params;
   const { referer } = req.headers;
   if (!userDni) {
